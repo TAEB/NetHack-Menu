@@ -138,7 +138,7 @@ sub deselect {
     }
 }
 
-sub end {
+sub commit {
     my $self = shift;
 
     my @pages = map {

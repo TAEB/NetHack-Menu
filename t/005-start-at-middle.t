@@ -89,5 +89,5 @@ is_deeply(\@items_selectable, ["page 3", "page 4", "page 1", "page 2"], "items a
 
 is_deeply(\@selectors, ['c', 'd', 'a', 'b'], "our four selectors were passed in as arguments");
 
-is($menu->end, '^c>>>b ', "first page, select 1, fourth page, select 4, done");
+is($menu->commit, '^c>>>b ', "first page, select 1, fourth page, select 4, done");
 

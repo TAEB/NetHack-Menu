@@ -61,4 +61,4 @@ is_deeply(\@items_selectable, ["a blessed +1 quarterstaff (weapon in hands)", "a
 
 is_deeply(\@selectors, ['a', 'X'], "our two selectors were passed in as arguments");
 
-is($menu->end, '^a ', "first page, selected the quarterstaff, ended the menu");
+is($menu->commit, '^a ', "first page, selected the quarterstaff, ended the menu");

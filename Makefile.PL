@@ -5,9 +5,11 @@ use inc::Module::Install;
 name           'NetHack-Menu';
 all_from       'lib/NetHack/Menu.pm';
 
-requires       '';
+requires       'Moose';
 
 build_requires 'Test::More';
+build_requires 'Test::MockObject';
+build_requires 'Test::Exception';
 
 auto_install;
 WriteAll;

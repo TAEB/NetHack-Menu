@@ -12,13 +12,11 @@ has vt => (
 has page_number => (
     is      => 'rw',
     isa     => 'Int',
-    default => 1,
 );
 
 has page_count => (
     is      => 'rw',
     isa     => 'Int',
-    default => 1,
 );
 
 has pages => (
@@ -35,12 +33,19 @@ sub at_end {
             my ($current, $max) = ($3, $4);
             ($current, $max) = (1, 1) if ($2||'') eq 'end';
 
+            # this may happen if someone is trying to screw with us and gives
+            # us a page number or page count of 0
+            next unless $current && $max;
+
             $self->page_number($current);
             $self->page_count($max);
             $self->parse_current_page(length($1), $_);
             last;
         }
     }
+
+    defined($self->page_number)
+        or Carp::croak "Unable to parse a menu.";
 
     for (1 .. $self->page_count) {
         if (@{ $self->pages->[$_] || [] } == 0) {

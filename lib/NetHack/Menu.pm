@@ -94,7 +94,7 @@ sub next {
     # now look for any pages we may have missed at the beginning
     for (1 .. $self->page_number - 1) {
         if (@{ $self->pages->[$_] || [] } == 0) {
-            return join '', map {'>'} $self->page_number + 1 .. $_;
+            return '^' . join '', map {'>'} $self->page_number + 1 .. $_;
         }
     }
 

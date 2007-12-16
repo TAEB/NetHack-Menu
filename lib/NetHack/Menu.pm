@@ -174,19 +174,65 @@ our $VERSION = '0.01';
         $term_vt102->process($nh->send_and_recv($menu->next));
     }
 
+    # we want to stuff all blessed items into our bag
     $menu->select(sub { /blessed/ });
+
+    # but we don't want things that will make our bag explode
     $menu->deselect(sub { /cancell|bag.*(holding|tricks)/ });
 
-    $term_vt102->process($nh->send_and_recv($menu->end));
+    $term_vt102->process($nh->send_and_recv($menu->commit));
 
 =head1 DESCRIPTION
 
 NetHack requires a lot of menu management. This module aims to alleviate the
 difficulty of parsing and interacting with menus.
 
-=head1 SEE ALSO
+This module is meant to be as general and flexible as possible. You just give
+it a L<Term::VT102> object, send the commands it gives you to NetHack, and
+update the L<Term::VT102> object. Your code should look roughly the same as
+the code given in the Synopsis.
 
-L<Foo::Bar>
+=head1 METHODS
+
+=head2 new (vt => L<Term::VT102>) -> C<NetHack::Menu>
+
+Takes a L<Term::VT102> (or a behaving subclass, such as
+L<Term::VT102::Boundless> or L<Term::VT102::ZeroBased>).
+
+=head2 at_end -> Bool
+
+This will return whether we've finished compiling the menu. This must be
+called for each page because this is what does all the compilation.
+
+=head2 next -> Str
+
+Returns the string to be used to get to the next page. Note that you should
+not ignore this method and use C<< > >> or a space if your menu may not
+start on page 1. This method will make sure everything is hunky-dory anyway,
+so you should still use it.
+
+=head2 select Code
+
+Evaluates the code for each item on the menu and selects those which produce
+a true value. The code ref receives C<$_> as the text of the item (e.g.
+C<a blessed +1 quarterstaff (weapon in hands)>). The code ref also receives the
+item's selector (the character you'd type to toggle the item) as an argument.
+
+Note that you can stack up multiple selects (and deselects) before eventually
+finishing the menu with C<< $menu->commit >>.
+
+Do note that selecting is not the same as toggling.
+
+This currently returns no useful value.
+
+=head2 deselect Code
+
+Same as select, but different in the expected way. C<:)>
+
+=head2 commit -> Str
+
+This will return the string to be sent that will navigate the menu and toggle
+the requested items.
 
 =head1 AUTHOR
 

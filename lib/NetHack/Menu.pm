@@ -234,6 +234,22 @@ Same as select, but different in the expected way. C<:)>
 This will return the string to be sent that will navigate the menu and toggle
 the requested items.
 
+=head1 TODO
+
+=over 4
+
+=item
+
+Not everyone uses the default C<^>, C<|>, and C<< > >> menu accelerators.
+Provide a way to change them.
+
+=item
+
+Not everyone uses L<Term::VT102>. Provide some way to pass in just a string or
+something. This will be added on an if-needed basis. Anyone?
+
+=back
+
 =head1 AUTHOR
 
 Shawn M Moore, C<< <sartak at gmail.com> >>

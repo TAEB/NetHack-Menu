@@ -46,7 +46,7 @@ MENU
 ok(!$menu->at_end, "it knows we're NOT at the end");
 checked_ok([0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4], "rows 0-5 checked for finding the end, 0-4 checked for items");
 is($menu->next, '>', "next page");
-like(shift(@rows_returned), qr/^\s*\(1 of 2\)\s*$/, "last row to be returned is our 'end of menu indiactor");
+like(shift(@rows_returned), qr/^\s*\(1 of 2\)\s*$/, "last row to be returned is our 'end of menu indicator");
 is(@rows_returned, 0, "no more rows left");
 
 push @rows_returned, split /\n/, (<< 'MENU') x 2;

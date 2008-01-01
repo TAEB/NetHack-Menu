@@ -25,6 +25,16 @@ has pages => (
     default => sub { [] },
 );
 
+sub has_menu {
+    my $self = shift;
+    for (0 .. $self->rows) {
+        if ($self->row_plaintext($_) =~ /^(.*)\((end|(\d+) of (\d+))\)\s*$/) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 sub at_end {
     my $self = shift;
 
@@ -198,6 +208,10 @@ the code given in the Synopsis.
 
 Takes a L<Term::VT102> (or a behaving subclass, such as
 L<Term::VT102::Boundless> or L<Term::VT102::ZeroBased>).
+
+=head2 has_menu -> Bool
+
+Is there currently a menu on the screen?
 
 =head2 at_end -> Bool
 

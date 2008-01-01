@@ -218,6 +218,8 @@ Is there currently a menu on the screen?
 This will return whether we've finished compiling the menu. This must be
 called for each page because this is what does all the compilation.
 
+Note that if there's no menu, this will C<croak>.
+
 =head2 next -> Str
 
 Returns the string to be used to get to the next page. Note that you should

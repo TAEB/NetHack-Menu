@@ -28,7 +28,7 @@ has pages => (
 sub has_menu {
     my $self = shift;
     for (0 .. $self->rows) {
-        if ($self->row_plaintext($_) =~ /\((end|(\d+) of (\d+))\)\s*$/) {
+        if (($self->row_plaintext($_)||'') =~ /\((end|(\d+) of (\d+))\)\s*$/) {
             my ($current, $max) = ($2, $3);
             ($current, $max) = (1, 1) if ($1||'') eq 'end';
 
@@ -46,7 +46,7 @@ sub at_end {
     my $self = shift;
 
     for (0 .. $self->rows) {
-        if ($self->row_plaintext($_) =~ /^(.*)\((end|(\d+) of (\d+))\)\s*$/) {
+        if (($self->row_plaintext($_)||'') =~ /^(.*)\((end|(\d+) of (\d+))\)\s*$/) {
             my ($current, $max) = ($3, $4);
             ($current, $max) = (1, 1) if ($2||'') eq 'end';
 

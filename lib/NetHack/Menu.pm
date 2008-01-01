@@ -28,7 +28,14 @@ has pages => (
 sub has_menu {
     my $self = shift;
     for (0 .. $self->rows) {
-        if ($self->row_plaintext($_) =~ /^(.*)\((end|(\d+) of (\d+))\)\s*$/) {
+        if ($self->row_plaintext($_) =~ /\((end|(\d+) of (\d+))\)\s*$/) {
+            my ($current, $max) = ($2, $3);
+            ($current, $max) = (1, 1) if ($1||'') eq 'end';
+
+            # this may happen if someone is trying to screw with us and gives
+            # us a page number or page count of 0
+            next unless $current && $max;
+
             return 1;
         }
     }

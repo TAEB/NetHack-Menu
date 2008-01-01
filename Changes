@@ -1,5 +1,7 @@
 Revision history for NetHack-Menu
 
+0.03
+
 0.02    Tue Jan  1 21:26:01 2007
         Added has_menu method.
 

@@ -2,7 +2,7 @@ NAME
     NetHack::Menu - interact with NetHack's menus
 
 VERSION
-    Version 0.01 released 16 Dec 07
+    Version 0.02 released 01 Jan 07
 
 SYNOPSIS
         use NetHack::Menu;
@@ -35,9 +35,14 @@ METHODS
     Takes a Term::VT102 (or a behaving subclass, such as
     Term::VT102::Boundless or Term::VT102::ZeroBased).
 
+  has_menu -> Bool
+    Is there currently a menu on the screen?
+
   at_end -> Bool
     This will return whether we've finished compiling the menu. This must be
     called for each page because this is what does all the compilation.
+
+    Note that if there's no menu, this will "croak".
 
   next -> Str
     Returns the string to be used to get to the next page. Note that you

@@ -1,7 +1,7 @@
 #!perl -T
 use strict;
 use warnings;
-use Test::More tests => 22;
+use Test::More tests => 24;
 use Test::MockObject;
 use Test::Exception;
 
@@ -35,10 +35,13 @@ my $menu = NetHack::Menu->new(vt => $vt);
 
 is(@rows_checked, 0, "No rows checked yet.");
 
-push @rows_returned, split /\n/, (<< 'MENU') x 2;
+push @rows_returned, split /\n/, (<< 'MENU') x 3;
                      a - page 1
                      (3 of 4) 
 MENU
+
+ok($menu->has_menu, "we has a menu");
+checked_ok([0, 1, 2], "correct rows checked");
 
 ok(!$menu->at_end, "it knows we're NOT at the end");
 checked_ok([0, 1, 2, 0, 1], "rows 0-2 checked for finding the end, 0-1 checked for items");

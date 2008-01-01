@@ -1,7 +1,7 @@
 #!perl -T
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 10;
 use Test::MockObject;
 use Test::Exception;
 
@@ -35,13 +35,16 @@ my $menu = NetHack::Menu->new(vt => $vt);
 
 is(@rows_checked, 0, "No rows checked yet.");
 
-push @rows_returned, split /\n/, (<< 'MENU') x 2;
+push @rows_returned, split /\n/, (<< 'MENU') x 3;
                      Weapons
                      a - a blessed +1 quarterstaff (weapon in hands)
                      Armor
                      X - an uncursed +0 cloak of magic resistance (being worn)
                      (end) 
 MENU
+
+ok($menu->has_menu, "we has a menu");
+checked_ok([0, 1, 2, 3, 4, 5], "rows 0-5 checked for finding the end");
 
 ok($menu->at_end, "it knows we're at the end here");
 checked_ok([0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4], "rows 0-5 checked for finding the end, 0-4 checked for items");

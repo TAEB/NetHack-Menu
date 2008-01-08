@@ -175,11 +175,11 @@ NetHack::Menu - interact with NetHack's menus
 
 =head1 VERSION
 
-Version 0.03 released 07 Dec 08
+Version 0.04 released ???
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 SYNOPSIS
 

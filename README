@@ -2,7 +2,7 @@ NAME
     NetHack::Menu - interact with NetHack's menus
 
 VERSION
-    Version 0.02 released 01 Jan 07
+    Version 0.03 released 07 Dec 08
 
 SYNOPSIS
         use NetHack::Menu;

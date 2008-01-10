@@ -218,7 +218,7 @@ NetHack::Menu - interact with NetHack's menus
 
 =head1 VERSION
 
-Version 0.04 released ???
+Version 0.04 released 09 Dec 07
 
 =cut
 

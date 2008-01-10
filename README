@@ -2,7 +2,7 @@ NAME
     NetHack::Menu - interact with NetHack's menus
 
 VERSION
-    Version 0.03 released 07 Dec 08
+    Version 0.04 released 09 Dec 07
 
 SYNOPSIS
         use NetHack::Menu;
@@ -31,9 +31,15 @@ DESCRIPTION
     same as the code given in the Synopsis.
 
 METHODS
-  new (vt => Term::VT102) -> "NetHack::Menu"
+  new (vt => Term::VT102, select_count => (none|single|multi)) -> "NetHack::Menu"
     Takes a Term::VT102 (or a behaving subclass, such as
-    Term::VT102::Boundless or Term::VT102::ZeroBased).
+    Term::VT102::Boundless or Term::VT102::ZeroBased). Also takes an
+    optional "select_count" which determines the type of menu.
+    "NetHack::Menu" cannot intuit it by itself, it depends on the
+    application to know what it is dealing with. Default: "multi".
+
+  select_count [none|single|multi] -> (none|single|multi)
+    Accessor for "select_count". Default: "multi".
 
   has_menu -> Bool
     Is there currently a menu on the screen?

@@ -164,7 +164,32 @@ sub deselect {
     }
 }
 
-sub commit {
+# we're just here to look, we promise not to break anything
+sub _commit_none {
+    my $self = shift;
+
+    return '^' . ('>' x @{ $self->pages });
+}
+
+# stop as soon as we've got the first item to select
+sub _commit_single {
+    my $self = shift;
+    my $out = '^';
+
+    for (@{ $self->pages }) {
+        for (@{ $_ || [] }) {
+            if ($_->[2]) {
+                return $out . $_->[1];
+            }
+        }
+        $out .= '>';
+    }
+
+    return $out;
+}
+
+# everything and anything, baby
+sub _commit_multi {
     my $self = shift;
 
     my @pages = map {
@@ -176,6 +201,12 @@ sub commit {
     shift @pages; # there is no page 0
 
     return '^' . join('>', @pages) . ' ';
+}
+
+sub commit {
+    my $self = shift;
+    my $method = '_commit_' . $self->select_count;
+    $self->$method();
 }
 
 =head1 NAME

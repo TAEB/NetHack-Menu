@@ -1,5 +1,7 @@
 Revision history for NetHack-Menu
 
+0.05
+
 0.04    Wed Jan  9 22:15:50 2008
         Add support for single- and no-select menus.
         Add support for #enhance by relaxing some things.

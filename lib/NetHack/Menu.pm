@@ -254,10 +254,17 @@ the code given in the Synopsis.
 
 =head1 METHODS
 
-=head2 new (vt => L<Term::VT102>) -> C<NetHack::Menu>
+=head2 new (vt => L<Term::VT102>, select_count => (none|single|multi)) -> C<NetHack::Menu>
 
 Takes a L<Term::VT102> (or a behaving subclass, such as
-L<Term::VT102::Boundless> or L<Term::VT102::ZeroBased>).
+L<Term::VT102::Boundless> or L<Term::VT102::ZeroBased>). Also takes an optional
+C<select_count> which determines the type of menu. C<NetHack::Menu> cannot
+intuit it by itself, it depends on the application to know what it is dealing
+with. Default: C<multi>.
+
+=head2 select_count [none|single|multi] -> (none|single|multi)
+
+Accessor for C<select_count>. Default: C<multi>.
 
 =head2 has_menu -> Bool
 

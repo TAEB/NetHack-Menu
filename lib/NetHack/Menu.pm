@@ -175,8 +175,11 @@ sub _commit_none {
 sub _commit_single {
     my $self = shift;
     my $out = '^';
+    my $skip_first = 0;
 
     for (@{ $self->pages }) {
+        next if $skip_first++ == 0;
+
         for (@{ $_ || [] }) {
             if ($_->[2]) {
                 return $out . $_->[1];

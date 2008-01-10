@@ -188,7 +188,7 @@ sub _commit_single {
         $out .= '>';
     }
 
-    return $out;
+    return $out . ' ';
 }
 
 # everything and anything, baby

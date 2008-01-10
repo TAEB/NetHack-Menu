@@ -168,7 +168,9 @@ sub deselect {
 sub _commit_none {
     my $self = shift;
 
-    return '^' . ('>' x @{ $self->pages });
+    return '^'
+         . '>' x (@{ $self->pages }-1)
+         . ' ';
 }
 
 # stop as soon as we've got the first item to select

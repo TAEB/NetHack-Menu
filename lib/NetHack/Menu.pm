@@ -82,7 +82,8 @@ sub parse_current_page {
     my $page = $self->pages->[ $self->page_number ] ||= [];
     return if @$page;
 
-    my $re = qr/^(?:.{$start_col})(.) ([-+]) (.*?)\s*$/;
+    # extra space is for #enhance
+    my $re = qr/^(?:.{$start_col})(.)  ?([-+]) (.*?)\s*$/;
     for (0 .. $end_row - 1) {
         next unless $self->row_plaintext($_) =~ $re;
         my ($selector, $selected, $name) = ($1, $2 eq '+', $3);

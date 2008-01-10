@@ -1,6 +1,7 @@
 #!perl
 package NetHack::Menu;
 use Moose;
+use Moose::Util::TypeConstraints;
 
 has vt => (
     is       => 'rw',
@@ -23,6 +24,13 @@ has pages => (
     is      => 'rw',
     isa     => 'ArrayRef[ArrayRef]',
     default => sub { [] },
+);
+
+enum 'NetHackMenuSelectCount' => qw(none single multi);
+has select_count => (
+    is      => 'rw',
+    isa     => 'NetHackMenuSelectCount',
+    default => 'multi',
 );
 
 sub has_menu {

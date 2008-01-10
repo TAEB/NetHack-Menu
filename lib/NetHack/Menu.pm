@@ -73,7 +73,7 @@ sub at_end {
         or Carp::croak "Unable to parse a menu.";
 
     for (1 .. $self->page_count) {
-        if (@{ $self->pages->[$_] || [] } == 0) {
+        if (!defined($self->pages->[$_])) {
             return 0;
         }
     }
@@ -87,8 +87,8 @@ sub parse_current_page {
     my $end_row   = shift;
 
     # have we already parsed this one?
+    return if defined $self->pages->[ $self->page_number ];
     my $page = $self->pages->[ $self->page_number ] ||= [];
-    return if @$page;
 
     # extra space is for #enhance
     my $re = qr/^(?:.{$start_col})(.)  ?([-+]) (.*?)\s*$/;
@@ -103,8 +103,6 @@ sub parse_current_page {
             $selected,
         ];
     }
-
-    confess "Unable to parse the current menu page." if !@$page;
 }
 
 sub next {

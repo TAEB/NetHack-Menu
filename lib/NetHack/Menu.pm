@@ -47,27 +47,32 @@ has noselect_x => (
 
 sub _has_no_select_menu {
     my $self = shift;
+    my $checking_for_menu = shift;
+
     my @page_cache;
 
     for (0 .. $self->rows) {
         my $row = $self->row_plaintext($_) || '';
         if ($row =~ /^(.*)--More--\s*$/) {
+            return 1 if $checking_for_menu;
+
             push @{ $self->cache }, \@page_cache;
             push @{ $self->noselect_x }, length $1;
-            return 1;
+            return 0; # not at end
         }
         else {
             push @page_cache, $row;
         }
     }
 
-    return 0;
+    return 0 if $checking_for_menu;
+    return 1; # at end
 }
 
 sub has_menu {
     my $self = shift;
 
-    return $self->_has_no_select_menu if $self->select_count eq 'none';
+    return $self->_has_no_select_menu(1) if $self->select_count eq 'none';
 
     for (0 .. $self->rows) {
         if (($self->row_plaintext($_)||'') =~ /\((end|(\d+) of (\d+))\)\s*$/) {
@@ -87,6 +92,8 @@ sub has_menu {
 
 sub at_end {
     my $self = shift;
+
+    return $self->_has_no_select_menu(0) if $self->select_count eq 'none';
 
     for (0 .. $self->rows) {
         if (($self->row_plaintext($_)||'') =~ /^(.*)\((end|(\d+) of (\d+))\)\s*$/) {

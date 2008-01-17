@@ -33,10 +33,45 @@ has select_count => (
     default => 'multi',
 );
 
+has cache => (
+    is      => 'rw',
+    isa     => 'ArrayRef[ArrayRef[Str]]',
+    default => sub { [] },
+);
+
+has noselect_x => (
+    is      => 'rw',
+    isa     => 'ArrayRef[Int]',
+    default => sub { [] },
+);
+
+sub _has_no_select_menu {
+    my $self = shift;
+    my @page_cache;
+
+    for (0 .. $self->rows) {
+        my $row = $self->row_plaintext($_) || '';
+        if ($row =~ /^(.*)--More--\s*$/) {
+            push @{ $self->cache }, \@page_cache;
+            push @{ $self->noselect_x }, length $1;
+            return 1;
+        }
+        else {
+            push @page_cache, $row;
+        }
+    }
+
+    return 0;
+}
+
 sub has_menu {
     my $self = shift;
+
+    return $self->_has_no_select_menu if $self->select_count eq 'none';
+
     for (0 .. $self->rows) {
         if (($self->row_plaintext($_)||'') =~ /\((end|(\d+) of (\d+))\)\s*$/) {
+
             my ($current, $max) = ($2, $3);
             ($current, $max) = (1, 1) if ($1||'') eq 'end';
 
@@ -108,6 +143,8 @@ sub parse_current_page {
 sub next {
     my $self = shift;
 
+    return ' ' if $self->select_count eq 'none';
+
     # look for the first page after the current page that hasn't been parsed
     for ($self->page_number + 1 .. $self->page_count) {
         if (@{ $self->pages->[$_] || [] } == 0) {
@@ -126,9 +163,28 @@ sub next {
     confess "$self->next called even though $self->at_end is true.";
 }
 
+sub _select_none {
+    my $self = shift;
+    my $code = shift;
+
+    for my $i (0 .. @{ $self->cache }) {
+        my $x    = $self->noselect_x->[$i];
+        my @page = @{ $self->cache->[$i] || [] }
+            or next;
+
+        for (@page) {
+            next if $x > length;
+            local $_ = substr($_, $x);
+            $code->();
+        }
+    }
+}
+
 sub select {
     my $self = shift;
     my $code = shift;
+
+    return $self->_select_none($code) if $self->select_count eq 'none';
 
     for (map { @{ $_ || [] } } @{ $self->pages }) {
         my ($name, $selector, $selected, $started_selected) = @$_;
@@ -166,9 +222,7 @@ sub deselect {
 sub _commit_none {
     my $self = shift;
 
-    return '^'
-         . '>' x (@{ $self->pages }-1)
-         . ' ';
+    return '';
 }
 
 # stop as soon as we've got the first item to select
@@ -266,6 +320,8 @@ with. Default: C<multi>.
 
 Accessor for C<select_count>. Default: C<multi>.
 
+WARNING: No-select menus are potentially ambiguous with --More--. See below.
+
 =head2 has_menu -> Bool
 
 Is there currently a menu on the screen?
@@ -329,9 +385,30 @@ Shawn M Moore, C<< <sartak at gmail.com> >>
 
 =head1 BUGS
 
-No known bugs.
+=head2 No-select menus
 
-Please report any bugs through RT: email
+Unfortunately, NetHack uses the string C<--More--> to indicate a no-select
+menu. This is ambiguous with a list of messages that spills over onto another
+"page".
+
+The expected way to handle no-select menus is to:
+
+=over 4
+
+=item Look at the topline
+
+=item Decide if the topline is a no-select menu
+
+This can be done by looking to see if it contains, for example, "Discoveries".
+Note that "Things that are here" can appear on the third line. Argh!
+
+=item If so, use NetHack::Menu
+
+=item Otherwise, hit space
+
+=back
+
+Please report any other bugs through RT: email
 C<bug-nethack-menu at rt.cpan.org>, or browse
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=NetHack-Menu>.
 

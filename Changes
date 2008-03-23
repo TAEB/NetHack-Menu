@@ -1,6 +1,7 @@
 Revision history for NetHack-Menu
 
 0.05
+        Drop support for no-select menus.
 
 0.04    Wed Jan  9 22:15:50 2008
         Add support for single- and no-select menus.

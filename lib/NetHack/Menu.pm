@@ -26,7 +26,7 @@ has pages => (
     default => sub { [] },
 );
 
-enum 'NetHackMenuSelectCount' => qw(none single multi);
+enum 'NetHackMenuSelectCount' => qw(single multi);
 has select_count => (
     is      => 'rw',
     isa     => 'NetHackMenuSelectCount',
@@ -45,34 +45,8 @@ has noselect_x => (
     default => sub { [] },
 );
 
-sub _has_no_select_menu {
-    my $self = shift;
-    my $checking_for_menu = shift;
-
-    my @page_cache;
-
-    for (0 .. $self->rows) {
-        my $row = $self->row_plaintext($_) || '';
-        if ($row =~ /^(.*)--More--\s*$/) {
-            return 1 if $checking_for_menu;
-
-            push @{ $self->cache }, \@page_cache;
-            push @{ $self->noselect_x }, length $1;
-            return 0; # not at end
-        }
-        else {
-            push @page_cache, $row;
-        }
-    }
-
-    return 0 if $checking_for_menu;
-    return 1; # at end
-}
-
 sub has_menu {
     my $self = shift;
-
-    return $self->_has_no_select_menu(1) if $self->select_count eq 'none';
 
     for (0 .. $self->rows) {
         if (($self->row_plaintext($_)||'') =~ /\((end|(\d+) of (\d+))\)\s*$/) {
@@ -92,8 +66,6 @@ sub has_menu {
 
 sub at_end {
     my $self = shift;
-
-    return $self->_has_no_select_menu(0) if $self->select_count eq 'none';
 
     for (0 .. $self->rows) {
         if (($self->row_plaintext($_)||'') =~ /^(.*)\((end|(\d+) of (\d+))\)\s*$/) {
@@ -150,8 +122,6 @@ sub parse_current_page {
 sub next {
     my $self = shift;
 
-    return ' ' if $self->select_count eq 'none';
-
     # look for the first page after the current page that hasn't been parsed
     for ($self->page_number + 1 .. $self->page_count) {
         if (@{ $self->pages->[$_] || [] } == 0) {
@@ -170,28 +140,9 @@ sub next {
     confess "$self->next called even though $self->at_end is true.";
 }
 
-sub _select_none {
-    my $self = shift;
-    my $code = shift;
-
-    for my $i (0 .. @{ $self->cache }) {
-        my $x    = $self->noselect_x->[$i];
-        my @page = @{ $self->cache->[$i] || [] }
-            or next;
-
-        for (@page) {
-            next if $x > length;
-            local $_ = substr($_, $x);
-            $code->();
-        }
-    }
-}
-
 sub select {
     my $self = shift;
     my $code = shift;
-
-    return $self->_select_none($code) if $self->select_count eq 'none';
 
     for (map { @{ $_ || [] } } @{ $self->pages }) {
         my ($name, $selector, $selected, $started_selected) = @$_;
@@ -223,13 +174,6 @@ sub deselect {
             $_->[2] = 0;
         }
     }
-}
-
-# we're just here to look, we promise not to break anything
-sub _commit_none {
-    my $self = shift;
-
-    return '';
 }
 
 # stop as soon as we've got the first item to select
@@ -315,7 +259,7 @@ the code given in the Synopsis.
 
 =head1 METHODS
 
-=head2 new (vt => L<Term::VT102>, select_count => (none|single|multi)) -> C<NetHack::Menu>
+=head2 new (vt => L<Term::VT102>, select_count => (single|multi)) -> C<NetHack::Menu>
 
 Takes a L<Term::VT102> (or a behaving subclass, such as
 L<Term::VT102::Boundless> or L<Term::VT102::ZeroBased>). Also takes an optional
@@ -323,7 +267,7 @@ C<select_count> which determines the type of menu. C<NetHack::Menu> cannot
 intuit it by itself, it depends on the application to know what it is dealing
 with. Default: C<multi>.
 
-=head2 select_count [none|single|multi] -> (none|single|multi)
+=head2 select_count [single|multi] -> (single|multi)
 
 Accessor for C<select_count>. Default: C<multi>.
 

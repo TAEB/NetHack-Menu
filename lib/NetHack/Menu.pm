@@ -326,6 +326,12 @@ Do note that selecting is not the same as toggling.
 
 This currently returns no useful value.
 
+=head2 select_quantity Code
+
+Same as select, but instead of returning a truth value the coderef should
+return undef (if no change is to be made for this item), a non-negative integer
+(to select a specific amount), or the special string 'all'.
+
 =head2 deselect Code
 
 Same as select, but different in the expected way. C<:)>

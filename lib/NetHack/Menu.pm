@@ -171,7 +171,7 @@ sub select_quantity {
             $code->($selector);
         };
 
-        $_->[2] = defined($select) ? $select : $_[2];
+        $_->[2] = defined($select) ? $select : $_->[2];
     }
 }
 

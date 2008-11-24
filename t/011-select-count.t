@@ -60,7 +60,7 @@ $menu->select_quantity(sub {
     /quarterstaff/ ? 0 : /dagger/ ? 'all' : 2;
 });
 
-is_deeply(\@items_selectable, ["a blessed +1 quarterstaff (weapon in hands)", "13 uncursed +3 daggers", "3 cursed +0 darts"], "the items showed up");
+is_deeply(\@items_selectable, ["a blessed +1 quarterstaff (weapon in hands)", "14 uncursed +3 daggers", "3 cursed +0 darts"], "the items showed up");
 
 is_deeply(\@selectors, ['a', 'd', 'X'], "our selectors were passed in as arguments");
 

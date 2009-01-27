@@ -1,6 +1,9 @@
 Revision history for NetHack-Menu
 
-0.06
+0.07
+
+0.06    Mon Jan 26 11:01:02 2009
+        Add select_quantity method.
 
 0.05    Sun Mar 23 15:16:05 2008
         Drop support for no-select menus, after MUCH PAIN.

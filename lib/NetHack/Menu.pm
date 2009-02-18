@@ -1,4 +1,3 @@
-#!perl
 package NetHack::Menu;
 use Moose;
 use Moose::Util::TypeConstraints;

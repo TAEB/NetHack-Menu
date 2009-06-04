@@ -354,9 +354,11 @@ something. This will be added on an if-needed basis. Anyone?
 
 =back
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Shawn M Moore, C<< <sartak at gmail.com> >>
+
+Stefan O'Rear, C<< stefanor at cox.net> >>
 
 =head1 BUGS
 

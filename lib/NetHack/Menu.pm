@@ -239,7 +239,7 @@ sub commit {
 
 =head1 NAME
 
-NetHack::Menu - interact with NetHack's menus
+NetHack::Menu - parse and interact with a NetHack menu
 
 =head1 VERSION
 

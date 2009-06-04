@@ -10,6 +10,7 @@ requires       'Moose';
 build_requires 'Test::MockObject';
 build_requires 'Test::Exception';
 
+githubmeta;
 auto_install;
 WriteAll;
 

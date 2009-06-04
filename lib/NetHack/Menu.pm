@@ -247,10 +247,6 @@ __END__
 
 NetHack::Menu - parse and interact with a NetHack menu
 
-=head1 VERSION
-
-Version 0.06 released Jan 2009
-
 =head1 SYNOPSIS
 
     use NetHack::Menu;
@@ -384,38 +380,6 @@ Note that "Things that are here" can appear on the third line. Argh!
 =item If so, use NetHack::Menu
 
 =item Otherwise, hit space
-
-=back
-
-Please report any other bugs through RT: email
-C<bug-nethack-menu at rt.cpan.org>, or browse
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=NetHack-Menu>.
-
-=head1 SUPPORT
-
-You can find this documentation for this module with the perldoc command.
-
-    perldoc NetHack::Menu
-
-You can also look for information at:
-
-=over 4
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/NetHack-Menu>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/NetHack-Menu>
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=NetHack-Menu>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/NetHack-Menu>
 
 =back
 

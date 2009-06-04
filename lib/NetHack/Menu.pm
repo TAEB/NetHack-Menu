@@ -2,6 +2,8 @@ package NetHack::Menu;
 use Moose;
 use Moose::Util::TypeConstraints;
 
+our $VERSION = '0.06';
+
 has vt => (
     is       => 'rw',
     isa      => 'Term::VT102',
@@ -237,6 +239,10 @@ sub commit {
     $self->$method();
 }
 
+1;
+
+__END__
+
 =head1 NAME
 
 NetHack::Menu - parse and interact with a NetHack menu
@@ -244,10 +250,6 @@ NetHack::Menu - parse and interact with a NetHack menu
 =head1 VERSION
 
 Version 0.06 released Jan 2009
-
-=cut
-
-our $VERSION = '0.06';
 
 =head1 SYNOPSIS
 
@@ -425,6 +427,4 @@ This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =cut
-
-1;
 

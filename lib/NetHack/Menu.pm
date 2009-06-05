@@ -356,9 +356,9 @@ something. This will be added on an if-needed basis. Anyone?
 
 =head1 AUTHORS
 
-Shawn M Moore, C<< <sartak at gmail.com> >>
+Shawn M Moore, C<sartak@gmail.com>
 
-Stefan O'Rear, C<< stefanor at cox.net> >>
+Stefan O'Rear, C<stefanor@cox.net>
 
 =head1 BUGS
 

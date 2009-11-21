@@ -1,4 +1,5 @@
 package NetHack::Menu;
+use 5.008001;
 use Moose;
 use Moose::Util::TypeConstraints;
 

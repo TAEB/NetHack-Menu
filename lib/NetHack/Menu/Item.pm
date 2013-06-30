@@ -37,6 +37,11 @@ has _original_quantity => (
     isa => 'Int|NetHack::Menu::Item::SelectedAll',
 );
 
+has user_data => (
+    is  => 'rw',
+    isa => 'Any',
+);
+
 around BUILDARGS => sub {
     my $orig = shift;
     my $self = shift;

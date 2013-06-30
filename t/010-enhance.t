@@ -3,6 +3,7 @@ use warnings;
 use Test::More;
 use Test::MockObject;
 use Test::Exception;
+use Test::Deep;
 
 use NetHack::Menu;
 
@@ -83,17 +84,25 @@ ok($menu->at_end, "NOW we're at the end");
 checked_ok([0..6, 0..5], "rows 0-5 checked for finding the end, 0-4 checked for items");
 dies_ok { $menu->next } "next after end dies";
 
-my @items_selectable;
-my @selectors;
+my @items;
 $menu->select(sub {
-    push @items_selectable, $_;
-    push @selectors, $_[0];
+    push @items, shift;
     1;
 });
 
-is_deeply(\@items_selectable, ['  quarterstaff       [Basic]']);
-
-is_deeply([splice @selectors], ['a'], "our four selectors were passed in as arguments");
+cmp_deeply(
+    \@items,
+    [
+        methods(
+            description         => "  quarterstaff       [Basic]",
+            selector            => 'a',
+            selected            => 1,
+            quantity            => 'all',
+            originally_selected => 0,
+            original_quantity   => 0,
+        ),
+    ],
+);
 
 is($menu->commit, '^a', "select the first thing on the first page, which exits the menu");
 

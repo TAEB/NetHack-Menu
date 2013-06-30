@@ -3,6 +3,7 @@ use warnings;
 use Test::More;
 use Test::MockObject;
 use Test::Exception;
+use Test::Deep;
 
 use NetHack::Menu;
 
@@ -51,17 +52,33 @@ checked_ok([0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4], "rows 0-5 checked for finding the 
 dies_ok { $menu->next } "next dies if menu->at_end";
 checked_ok([], "no rows checked");
 
-my @items_selectable;
-my @selectors;
+my @items;
 $menu->select(sub {
-    push @items_selectable, $_;
-    push @selectors, $_[0];
+    push @items, shift;
     /quarterstaff/;
 });
 
-is_deeply(\@items_selectable, ["a blessed +1 quarterstaff (weapon in hands)", "an uncursed +0 cloak of magic resistance (being worn)"], "the quarterstaff and [oMR showed up, but not the Weapons and Armor headers");
-
-is_deeply(\@selectors, ['a', 'X'], "our two selectors were passed in as arguments");
+cmp_deeply(
+    \@items,
+    [
+        methods(
+            description         => "a blessed +1 quarterstaff (weapon in hands)",
+            selector            => 'a',
+            selected            => 1,
+            quantity            => 'all',
+            originally_selected => 0,
+            original_quantity   => 0,
+        ),
+        methods(
+            description         => "an uncursed +0 cloak of magic resistance (being worn)",
+            selector            => 'X',
+            selected            => 0,
+            quantity            => 0,
+            originally_selected => 0,
+            original_quantity   => 0,
+        ),
+    ],
+);
 
 is($menu->commit, '^a ', "first page, selected the quarterstaff, ended the menu");
 

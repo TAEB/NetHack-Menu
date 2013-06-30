@@ -3,6 +3,7 @@ use warnings;
 use Test::More;
 use Test::MockObject;
 use Test::Exception;
+use Test::Deep;
 
 use NetHack::Menu;
 
@@ -63,17 +64,49 @@ ok($menu->at_end, "NOW we're at the end");
 checked_ok([0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4], "rows 0-5 checked for finding the end, 0-4 checked for items");
 dies_ok { $menu->next } "next after end dies";
 
-my @items_selectable;
-my @selectors;
+my @items;
 $menu->select(sub {
-    push @items_selectable, $_;
-    push @selectors, $_[0];
-    /a/;
+    push @items, shift;
+    1;
 });
 
-is_deeply(\@items_selectable, ["a blessed +1 quarterstaff (weapon in hands)", "an uncursed +0 cloak of magic resistance (being worn)", "a wand of enlightenment (0:12)", "a magic marker (0:91)"]);
-
-is_deeply(\@selectors, ['a', 'X', 'c', 'n'], "our four selectors were passed in as arguments");
+cmp_deeply(
+    \@items,
+    [
+        methods(
+            description         => "a blessed +1 quarterstaff (weapon in hands)",
+            selector            => 'a',
+            selected            => 1,
+            quantity            => 'all',
+            originally_selected => 0,
+            original_quantity   => 0,
+        ),
+        methods(
+            description         => "an uncursed +0 cloak of magic resistance (being worn)",
+            selector            => 'X',
+            selected            => 1,
+            quantity            => 'all',
+            originally_selected => 0,
+            original_quantity   => 0,
+        ),
+        methods(
+            description         => "a wand of enlightenment (0:12)",
+            selector            => 'c',
+            selected            => 1,
+            quantity            => 'all',
+            originally_selected => 1,
+            original_quantity   => 'all',
+        ),
+        methods(
+            description         => "a magic marker (0:91)",
+            selector            => 'n',
+            selected            => 1,
+            quantity            => 'all',
+            originally_selected => 0,
+            original_quantity   => 0,
+        ),
+    ],
+);
 
 is($menu->commit, '^aX>n ', "first page, select qstaff and cloak, next page, select marker but not the wand, ended the menu");
 

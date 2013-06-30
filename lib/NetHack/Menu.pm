@@ -1,7 +1,7 @@
 package NetHack::Menu;
-use 5.008001;
 use Moose;
-use Moose::Util::TypeConstraints;
+use Moose::Util::TypeConstraints 'enum';
+use NetHack::Menu::Item;
 
 our $VERSION = '0.06';
 
@@ -24,14 +24,13 @@ has page_count => (
 
 has pages => (
     is      => 'rw',
-    isa     => 'ArrayRef[ArrayRef]',
+    isa     => 'ArrayRef[ArrayRef[NetHack::Menu::Item]]',
     default => sub { [] },
 );
 
-enum 'NetHackMenuSelectCount' => qw(single multi);
 has select_count => (
     is      => 'rw',
-    isa     => 'NetHackMenuSelectCount',
+    isa     => (enum['single', 'multi']),
     default => 'multi',
 );
 
@@ -98,15 +97,34 @@ sub parse_current_page {
     my $re = qr/^(?:.{$start_col})(.)  ?([-+#]) (.*?)\s*$/;
     for (0 .. $end_row - 1) {
         next unless $self->row_plaintext($_) =~ $re;
-        my ($selector, $name) = ($1, $3);
-        my $selected = $2 eq '+' ? 'all' : $2 eq '#' ? -1 : 0;
+        my ($selector, $sigil, $name) = ($1, $2, $3);
+        my $quantity;
+        my $selected;
 
-        push @$page, [
-            $name,
-            $selector,
-            $selected,
-            $selected,
-        ];
+        if ($sigil eq '+') {
+            $selected = 1;
+            $quantity = 'all';
+        }
+        elsif ($sigil eq '-') {
+            $selected = 0;
+            $quantity = 0;
+        }
+        elsif ($sigil eq '#') {
+            $selected = 1;
+            # unknown selected quantity, leave it undef
+        }
+        else {
+            confess "Unknown sigil $sigil";
+        }
+
+        my $item = NetHack::Menu::Item->new(
+            description => $name,
+            selector    => $selector,
+            selected    => $selected,
+            (defined($quantity) ? (quantity => $quantity) : ()),
+        );
+
+        push @$page, $item;
     }
 }
 
@@ -132,53 +150,58 @@ sub next {
 }
 
 sub select {
-    my $self = shift;
-    my $code = shift;
+    my $self      = shift;
+    my $predicate = shift;
 
-    for (map { @{ $_ || [] } } @{ $self->pages }) {
-        my ($name, $selector, $selected, $started_selected) = @$_;
-
+    for my $item ($self->all_items) {
         my $select = do {
-            local $_ = $name;
-            $code->($selector);
+            local $_ = $item->description;
+            $predicate->($item);
         };
 
-        if ($select && $selected ne 'all') {
-            $_->[2] = 'all';
+        if ($select) {
+            $item->selected(1);
+            $item->quantity('all');
         }
     }
 }
 
 sub select_quantity {
-    my $self = shift;
-    my $code = shift;
+    my $self      = shift;
+    my $predicate = shift;
 
-    for (map { @{ $_ || [] } } @{ $self->pages }) {
-        my ($name, $selector, $selected, $started_selected) = @$_;
-
-        my $select = do {
-            local $_ = $name;
-            $code->($selector);
+    for my $item ($self->all_items) {
+        my $quantity = do {
+            local $_ = $item->description;
+            $predicate->($item);
         };
 
-        $_->[2] = defined($select) ? $select : $_->[2];
+        next if !defined($quantity);
+
+        $item->quantity($quantity);
+
+        if ($quantity) {
+            $item->selected(1);
+        }
+        else {
+            $item->selected(0);
+        }
     }
 }
 
 sub deselect {
-    my $self = shift;
-    my $code = shift;
+    my $self      = shift;
+    my $predicate = shift;
 
-    for (map { @{ $_ || [] } } @{ $self->pages }) {
-        my ($name, $selector, $selected, $started_selected) = @$_;
-
+    for my $item ($self->all_items) {
         my $deselect = do {
-            local $_ = $name;
-            $code->($selector);
+            local $_ = $item->description;
+            $predicate->($item);
         };
 
-        if ($deselect && $selected) {
-            $_->[2] = 0;
+        if ($deselect) {
+            $item->selected(0);
+            $item->quantity(0);
         }
     }
 }
@@ -192,14 +215,15 @@ sub _commit_single {
     for (@{ $self->pages }) {
         next if $skip_first++ == 0;
 
-        for (@{ $_ || [] }) {
-            if ($_->[2]) {
-                return $out . $_->[1];
+        for my $item (@$_) {
+            if ($item->selected) {
+                return $out . $item->selector;
             }
         }
         $out .= '>';
     }
 
+    chop $out; # useless >
     return $out . ' ';
 }
 
@@ -207,25 +231,32 @@ sub _commit_single {
 sub _commit_multi {
     my $self = shift;
 
-    my @pages = map {
-        join '', map {
-            ($_->[2] eq $_->[3]                ) ? ''                 :
-            ($_->[2] eq 0                      ) ? $_->[1]            :
-            ($_->[2] eq 'all'   && $_->[3] ne 0) ? ($_->[1] x 2)      :
-            ($_->[2] eq 'all'                  ) ? $_->[1]            :
-                                                   ($_->[2] . $_->[1]);
-        } @{ $_ || [] }
-    } @{ $self->pages };
+    my $out = '^';
 
-    shift @pages; # there is no page 0
+    for my $i (1 .. $self->page_count) {
+        for my $item (@{ $self->pages->[$i] }) {
+            my $item_commands = $item->commit
+                or next;
 
-    return '^' . join('>', @pages) . ' ';
+            $out .= $item_commands;
+        }
+
+        $out .= '>';
+    }
+
+    chop $out; # useless >
+    return $out . ' ';
 }
 
 sub commit {
     my $self = shift;
     my $method = '_commit_' . $self->select_count;
     $self->$method();
+}
+
+sub all_items {
+    my $self = shift;
+    return map { @{ $_ || [] } } @{ $self->pages };
 }
 
 1;

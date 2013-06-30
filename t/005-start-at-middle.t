@@ -3,6 +3,7 @@ use warnings;
 use Test::More;
 use Test::MockObject;
 use Test::Exception;
+use Test::Deep;
 
 use NetHack::Menu;
 
@@ -79,17 +80,50 @@ ok($menu->at_end, "NOW we're at the end");
 checked_ok([0, 1, 2, 0, 1], "rows 0-2 checked for finding the end, 0-1 checked for items");
 dies_ok { $menu->next } "next after end dies";
 
-my @items_selectable;
-my @selectors;
+my @items;
 $menu->select(sub {
-    push @items_selectable, $_;
-    push @selectors, $_[0];
+    push @items, shift;
     /[23]/;
 });
 
-is_deeply(\@items_selectable, ["page 3", "page 4", "page 1", "page 2"], "items are returned in page order, not compiled order");
+cmp_deeply(
+    \@items,
+    [
+        methods(
+            description         => "page 3",
+            selector            => 'c',
+            selected            => 1,
+            quantity            => 'all',
+            originally_selected => 0,
+            original_quantity   => 0,
+        ),
+        methods(
+            description         => "page 4",
+            selector            => 'd',
+            selected            => 0,
+            quantity            => 0,
+            originally_selected => 0,
+            original_quantity   => 0,
+        ),
+        methods(
+            description         => "page 1",
+            selector            => 'a',
+            selected            => 0,
+            quantity            => 0,
+            originally_selected => 0,
+            original_quantity   => 0,
+        ),
+        methods(
+            description         => "page 2",
+            selector            => 'b',
+            selected            => 1,
+            quantity            => 'all',
+            originally_selected => 0,
+            original_quantity   => 0,
+        ),
+    ],
+);
 
-is_deeply(\@selectors, ['c', 'd', 'a', 'b'], "our four selectors were passed in as arguments");
 
 is($menu->commit, '^c>>>b ', "first page, select 1, fourth page, select 4, done");
 

@@ -35,18 +35,6 @@ has select_count => (
     default => 'multi',
 );
 
-has cache => (
-    is      => 'rw',
-    isa     => 'ArrayRef[ArrayRef[Str]]',
-    default => sub { [] },
-);
-
-has noselect_x => (
-    is      => 'rw',
-    isa     => 'ArrayRef[Int]',
-    default => sub { [] },
-);
-
 sub has_menu {
     my $self = shift;
 

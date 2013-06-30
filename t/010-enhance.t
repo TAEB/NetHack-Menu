@@ -79,6 +79,41 @@ cmp_deeply(
     ],
 );
 
+is_deeply(
+    [ $menu->extra_rows ],
+    [
+        '',
+        ' Pick a skill to advance:',
+        '',
+        ' Fighting Skills',
+        '       bare handed combat [Unskilled]',
+        '       riding             [Unskilled]',
+        ' Weapon Skills',
+        '       dagger             [Unskilled]',
+        '       knife              [Unskilled]',
+        '       axe                [Unskilled]',
+        '       short sword        [Unskilled]',
+        '       club               [Unskilled]',
+        '       mace               [Unskilled]',
+        '       polearms           [Unskilled]',
+        '       spear              [Unskilled]',
+        '       javelin            [Unskilled]',
+        '       trident            [Unskilled]',
+        '       sling              [Unskilled]',
+        '       dart               [Unskilled]',
+        '       shuriken           [Unskilled]',
+        ' Spellcasting Skills',
+        '       attack spells      [Basic]',
+        '       healing spells     [Unskilled]',
+        '',
+        '       divination spells  [Unskilled]',
+        '       enchantment spells [Basic]',
+        '       clerical spells    [Unskilled]',
+        '       escape spells      [Unskilled]',
+        '       matter spells      [Unskilled]',
+    ],
+);
+
 is($menu->commit, '^a', "select the first thing on the first page, which exits the menu");
 
 done_testing;

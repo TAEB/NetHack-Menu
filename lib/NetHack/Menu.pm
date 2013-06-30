@@ -37,6 +37,16 @@ has select_count => (
     default => 'multi',
 );
 
+has extra_rows => (
+    traits  => ['Array'],
+    isa     => 'ArrayRef[Str]',
+    default => sub { [] },
+    handles => {
+        extra_rows     => 'elements',
+        _add_extra_row => 'push',
+    },
+);
+
 sub has_menu {
     my $self = shift;
 
@@ -99,35 +109,40 @@ sub _parse_current_page {
     # extra space is for #enhance
     my $re = qr/^(?:.{$start_col})(.)  ?([-+#]) (.*?)\s*$/;
     for (0 .. $end_row - 1) {
-        next unless $self->_row_plaintext($_) =~ $re;
-        my ($selector, $sigil, $name) = ($1, $2, $3);
-        my $quantity;
-        my $selected;
+        my $text = $self->_row_plaintext($_);
+        if ($text =~ $re) {
+            my ($selector, $sigil, $name) = ($1, $2, $3);
+            my $quantity;
+            my $selected;
 
-        if ($sigil eq '+') {
-            $selected = 1;
-            $quantity = 'all';
-        }
-        elsif ($sigil eq '-') {
-            $selected = 0;
-            $quantity = 0;
-        }
-        elsif ($sigil eq '#') {
-            $selected = 1;
-            # unknown selected quantity, leave it undef
+            if ($sigil eq '+') {
+                $selected = 1;
+                $quantity = 'all';
+            }
+            elsif ($sigil eq '-') {
+                $selected = 0;
+                $quantity = 0;
+            }
+            elsif ($sigil eq '#') {
+                $selected = 1;
+                # unknown selected quantity, leave it undef
+            }
+            else {
+                confess "Unknown sigil $sigil";
+            }
+
+            my $item = NetHack::Menu::Item->new(
+                description => $name,
+                selector    => $selector,
+                selected    => $selected,
+                (defined($quantity) ? (quantity => $quantity) : ()),
+            );
+
+            push @$page, $item;
         }
         else {
-            confess "Unknown sigil $sigil";
+            $self->_add_extra_row($text);
         }
-
-        my $item = NetHack::Menu::Item->new(
-            description => $name,
-            selector    => $selector,
-            selected    => $selected,
-            (defined($quantity) ? (quantity => $quantity) : ()),
-        );
-
-        push @$page, $item;
     }
 }
 

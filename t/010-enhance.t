@@ -94,12 +94,12 @@ cmp_deeply(
     \@items,
     [
         methods(
-            description         => "  quarterstaff       [Basic]",
-            selector            => 'a',
-            selected            => 1,
-            quantity            => 'all',
-            originally_selected => 0,
-            original_quantity   => 0,
+            description          => "  quarterstaff       [Basic]",
+            selector             => 'a',
+            selected             => 1,
+            quantity             => 'all',
+            _originally_selected => 0,
+            _original_quantity   => 0,
         ),
     ],
 );

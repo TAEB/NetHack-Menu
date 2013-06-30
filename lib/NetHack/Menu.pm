@@ -9,20 +9,23 @@ has vt => (
     is       => 'rw',
     isa      => 'Term::VT102',
     required => 1,
-    handles  => ['row_plaintext', 'rows'],
+    handles  => {
+        _row_plaintext => 'row_plaintext',
+        _vt_rows       => 'rows',
+    },
 );
 
-has page_number => (
+has _page_number => (
     is      => 'rw',
     isa     => 'Int',
 );
 
-has page_count => (
+has _page_count => (
     is      => 'rw',
     isa     => 'Int',
 );
 
-has pages => (
+has _pages => (
     is      => 'rw',
     isa     => 'ArrayRef[ArrayRef[NetHack::Menu::Item]]',
     default => sub { [] },
@@ -37,8 +40,8 @@ has select_count => (
 sub has_menu {
     my $self = shift;
 
-    for (0 .. $self->rows) {
-        if (($self->row_plaintext($_)||'') =~ /\((end|(\d+) of (\d+))\)\s*$/) {
+    for (0 .. $self->_vt_rows) {
+        if (($self->_row_plaintext($_)||'') =~ /\((end|(\d+) of (\d+))\)\s*$/) {
 
             my ($current, $max) = ($2, $3);
             ($current, $max) = (1, 1) if ($1||'') eq 'end';
@@ -56,8 +59,8 @@ sub has_menu {
 sub at_end {
     my $self = shift;
 
-    for (0 .. $self->rows) {
-        if (($self->row_plaintext($_)||'') =~ /^(.*)\((end|(\d+) of (\d+))\)\s*$/) {
+    for (0 .. $self->_vt_rows) {
+        if (($self->_row_plaintext($_)||'') =~ /^(.*)\((end|(\d+) of (\d+))\)\s*$/) {
             my ($current, $max) = ($3, $4);
             ($current, $max) = (1, 1) if ($2||'') eq 'end';
 
@@ -65,18 +68,18 @@ sub at_end {
             # us a page number or page count of 0
             next unless $current && $max;
 
-            $self->page_number($current);
-            $self->page_count($max);
-            $self->parse_current_page(length($1), $_);
+            $self->_page_number($current);
+            $self->_page_count($max);
+            $self->_parse_current_page(length($1), $_);
             last;
         }
     }
 
-    defined($self->page_number)
+    defined($self->_page_number)
         or Carp::croak "Unable to parse a menu.";
 
-    for (1 .. $self->page_count) {
-        if (!defined($self->pages->[$_])) {
+    for (1 .. $self->_page_count) {
+        if (!defined($self->_pages->[$_])) {
             return 0;
         }
     }
@@ -84,19 +87,19 @@ sub at_end {
     return 1;
 }
 
-sub parse_current_page {
+sub _parse_current_page {
     my $self      = shift;
     my $start_col = shift;
     my $end_row   = shift;
 
     # have we already parsed this one?
-    return if defined $self->pages->[ $self->page_number ];
-    my $page = $self->pages->[ $self->page_number ] ||= [];
+    return if defined $self->_pages->[ $self->_page_number ];
+    my $page = $self->_pages->[ $self->_page_number ] ||= [];
 
     # extra space is for #enhance
     my $re = qr/^(?:.{$start_col})(.)  ?([-+#]) (.*?)\s*$/;
     for (0 .. $end_row - 1) {
-        next unless $self->row_plaintext($_) =~ $re;
+        next unless $self->_row_plaintext($_) =~ $re;
         my ($selector, $sigil, $name) = ($1, $2, $3);
         my $quantity;
         my $selected;
@@ -132,16 +135,16 @@ sub next {
     my $self = shift;
 
     # look for the first page after the current page that hasn't been parsed
-    for ($self->page_number + 1 .. $self->page_count) {
-        if (@{ $self->pages->[$_] || [] } == 0) {
-            return join '', map {'>'} $self->page_number + 1 .. $_;
+    for ($self->_page_number + 1 .. $self->_page_count) {
+        if (@{ $self->_pages->[$_] || [] } == 0) {
+            return join '', map {'>'} $self->_page_number + 1 .. $_;
         }
     }
 
     # now look for any pages we may have missed at the beginning
-    for (1 .. $self->page_number - 1) {
-        if (@{ $self->pages->[$_] || [] } == 0) {
-            return '^' . join '', map {'>'} $self->page_number + 1 .. $_;
+    for (1 .. $self->_page_number - 1) {
+        if (@{ $self->_pages->[$_] || [] } == 0) {
+            return '^' . join '', map {'>'} $self->_page_number + 1 .. $_;
         }
     }
 
@@ -212,7 +215,7 @@ sub _commit_single {
     my $out = '^';
     my $skip_first = 0;
 
-    for (@{ $self->pages }) {
+    for (@{ $self->_pages }) {
         next if $skip_first++ == 0;
 
         for my $item (@$_) {
@@ -233,8 +236,8 @@ sub _commit_multi {
 
     my $out = '^';
 
-    for my $i (1 .. $self->page_count) {
-        for my $item (@{ $self->pages->[$i] }) {
+    for my $i (1 .. $self->_page_count) {
+        for my $item (@{ $self->_pages->[$i] }) {
             my $item_commands = $item->commit
                 or next;
 
@@ -256,7 +259,7 @@ sub commit {
 
 sub all_items {
     my $self = shift;
-    return map { @{ $_ || [] } } @{ $self->pages };
+    return map { @{ $_ || [] } } @{ $self->_pages };
 }
 
 1;

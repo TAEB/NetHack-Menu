@@ -22,7 +22,7 @@ has selected => (
     default => 0,
 );
 
-has originally_selected => (
+has _originally_selected => (
     is  => 'ro',
     isa => 'Bool',
 );
@@ -32,7 +32,7 @@ has quantity => (
     isa => 'Int|NetHack::Menu::Item::SelectedAll',
 );
 
-has original_quantity => (
+has _original_quantity => (
     is  => 'ro',
     isa => 'Int|NetHack::Menu::Item::SelectedAll',
 );
@@ -43,10 +43,10 @@ around BUILDARGS => sub {
 
     my $params = $self->$orig(@_);
 
-    $params->{original_quantity} = $params->{quantity}
+    $params->{_original_quantity} = $params->{quantity}
         if exists($params->{quantity});
 
-    $params->{originally_selected} = $params->{selected}
+    $params->{_originally_selected} = $params->{selected}
         if exists($params->{selected});
 
     return $params;
@@ -56,12 +56,12 @@ sub commit {
     my $self = shift;
 
     # nothing needed if it was unselected and stayed unselected
-    if (!$self->originally_selected && !$self->selected) {
+    if (!$self->_originally_selected && !$self->selected) {
         return;
     }
 
     # deselect
-    if ($self->originally_selected && !$self->selected) {
+    if ($self->_originally_selected && !$self->selected) {
         return $self->selector;
     }
 
@@ -71,8 +71,8 @@ sub commit {
     }
 
     if ($self->quantity eq 'all') {
-        if ($self->originally_selected) {
-            if (($self->original_quantity||'') eq 'all') {
+        if ($self->_originally_selected) {
+            if (($self->_original_quantity||'') eq 'all') {
                 return;
             }
             else {

@@ -2,7 +2,6 @@ use strict;
 use warnings;
 use Test::More;
 use Test::MockObject;
-use Test::Exception;
 
 use NetHack::Menu;
 

@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 use Test::MockObject;
-use Test::Exception;
+use Test::Fatal;
 use Test::Deep;
 
 use NetHack::Menu;
@@ -46,7 +46,7 @@ MENU
 ok($menu->at_end, "it knows we're at the end here");
 checked_ok([0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4], "rows 0-5 checked for finding the end, 0-4 checked for items");
 
-dies_ok { $menu->next } "next dies if menu->at_end";
+ok(exception { $menu->next }, "next dies if menu->at_end");
 checked_ok([], "no rows checked");
 
 my @select_items;

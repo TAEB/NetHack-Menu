@@ -8,7 +8,6 @@ githubmeta;
 
 requires       'Moose';
 
-build_requires 'Test::MockObject';
 build_requires 'Test::Fatal';
 build_requires 'Test::Deep';
 

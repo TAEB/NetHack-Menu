@@ -1,38 +1,36 @@
 use strict;
 use warnings;
+use lib 't/lib';
+use MockVT;
+
 use Test::More;
 use Test::Fatal;
-use Test::MockObject;
+use Test::Deep;
 
-use NetHack::Menu;
-
-my $vt = Test::MockObject->new;
-$vt->set_always(rows => 24);
-$vt->set_isa('Term::VT102');
-
+my $vt = MockVT->new;
 my $menu = NetHack::Menu->new(vt => $vt);
 
-$vt->set_always(row_plaintext => (' ' x 80));
+$vt->return_rows((' ' x 80));
 ok(!$menu->has_menu, "has_menu reports no menu");
 like(exception { $menu->at_end }, qr/Unable to parse a menu/);
 
-$vt->set_always(row_plaintext => '(end) or is it?');
+$vt->return_rows('(end) or is it?');
 ok(!$menu->has_menu, "has_menu reports no menu");
 like(exception { $menu->at_end }, qr/Unable to parse a menu/);
 
-$vt->set_always(row_plaintext => '(1 of 1) but we make sure to check for \s*$');
+$vt->return_rows('(1 of 1) but we make sure to check for \s*$');
 ok(!$menu->has_menu, "has_menu reports no menu");
 like(exception { $menu->at_end }, qr/Unable to parse a menu/);
 
-$vt->set_always(row_plaintext => '            (-1 of 1)   ');
+$vt->return_rows('            (-1 of 1)   ');
 ok(!$menu->has_menu, "has_menu reports no menu");
 like(exception { $menu->at_end }, qr/Unable to parse a menu/);
 
-$vt->set_always(row_plaintext => '            (0 of 1)');
+$vt->return_rows('            (0 of 1)');
 ok(!$menu->has_menu, "has_menu reports no menu");
 like(exception { $menu->at_end }, qr/Unable to parse a menu/);
 
-$vt->set_always(row_plaintext => '            (1 of 0)');
+$vt->return_rows('            (1 of 0)');
 ok(!$menu->has_menu, "has_menu reports no menu");
 like(exception { $menu->at_end }, qr/Unable to parse a menu/);
 

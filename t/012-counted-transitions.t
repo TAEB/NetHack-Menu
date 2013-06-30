@@ -1,24 +1,16 @@
 use strict;
 use warnings;
+use lib 't/lib';
+use MockVT;
+
 use Test::More;
-use Test::MockObject;
+use Test::Fatal;
+use Test::Deep;
 
-use NetHack::Menu;
-
-my @rows_returned;
-sub row_plaintext {
-    my $self = shift;
-    shift @rows_returned;
-}
-
-my $vt = Test::MockObject->new;
-$vt->mock(row_plaintext => \&row_plaintext);
-$vt->set_always(rows => 24);
-$vt->set_isa('Term::VT102');
-
+my $vt = MockVT->new;
 my $menu = NetHack::Menu->new(vt => $vt);
 
-push @rows_returned, split /\n/, (<< 'MENU') x 3;
+$vt->return_rows(split /\n/, (<< 'MENU') x 3);
                      Weapons
                      a - 1A
                      b + 1B

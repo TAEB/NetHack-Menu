@@ -1,41 +1,16 @@
 use strict;
 use warnings;
+use lib 't/lib';
+use MockVT;
+
 use Test::More;
-use Test::MockObject;
 use Test::Fatal;
 use Test::Deep;
 
-use NetHack::Menu;
-
-my @rows_returned;
-my @rows_checked;
-sub row_plaintext {
-    my $self = shift;
-    push @rows_checked, shift;
-    return '' if $rows_checked[-1] == 0;
-    shift @rows_returned;
-}
-
-sub checked_ok {
-    my $rows = shift;
-    my $name = shift;
-
-    local $Test::Builder::Level = $Test::Builder::Level + 1;
-
-    is_deeply(\@rows_checked, $rows, $name);
-    @rows_checked = ();
-}
-
-my $vt = Test::MockObject->new;
-$vt->mock(row_plaintext => \&row_plaintext);
-$vt->set_always(rows => 24);
-$vt->set_isa('Term::VT102');
-
+my $vt = MockVT->new;
 my $menu = NetHack::Menu->new(vt => $vt);
 
-is(@rows_checked, 0, "No rows checked yet.");
-
-push @rows_returned, split /\n/, (<< 'MENU') x 3;
+$vt->return_rows(split /\n/, (<< 'MENU') x 3);
                      Weapons
                      a - a blessed +1 quarterstaff (weapon in hands)
                      Armor
@@ -44,15 +19,15 @@ push @rows_returned, split /\n/, (<< 'MENU') x 3;
 MENU
 
 ok($menu->has_menu, "we has a menu");
-checked_ok([0, 1, 2, 3, 4, 5], "rows 0-5 checked for finding the end");
+$vt->checked_ok([0, 1, 2, 3, 4, 5], "rows 0-5 checked for finding the end");
 
 ok(!$menu->at_end, "it knows we're NOT at the end");
-checked_ok([0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4], "rows 0-5 checked for finding the end, 0-4 checked for items");
+$vt->checked_ok([0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4], "rows 0-5 checked for finding the end, 0-4 checked for items");
 is($menu->next, '>', "next page");
-like(shift(@rows_returned), qr/^\s*\(1 of 2\)\s*$/, "last row to be returned is our 'end of menu indicator");
-is(@rows_returned, 0, "no more rows left");
+like($vt->next_return_row, qr/^\s*\(1 of 2\)\s*$/, "last row to be returned is our 'end of menu indicator");
+is($vt->next_return_row, undef, "no more rows left");
 
-push @rows_returned, split /\n/, (<< 'MENU') x 2;
+$vt->return_rows(split /\n/, (<< 'MENU') x 2);
                      Wands
                      c + a wand of enlightenment (0:12)
                      Tools
@@ -61,7 +36,7 @@ push @rows_returned, split /\n/, (<< 'MENU') x 2;
 MENU
 
 ok($menu->at_end, "NOW we're at the end");
-checked_ok([0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4], "rows 0-5 checked for finding the end, 0-4 checked for items");
+$vt->checked_ok([0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4], "rows 0-5 checked for finding the end, 0-4 checked for items");
 ok(exception { $menu->next }, "next dies if menu->at_end");
 
 my @items;

@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 3;
+use Test::More;
 use Test::MockObject;
 use Test::Exception;
 
@@ -45,3 +45,5 @@ $menu->select_quantity(sub {
 });
 
 is($menu->commit, '^ef5g5h5ijll ', "menu commit handles all combinations");
+
+done_testing;

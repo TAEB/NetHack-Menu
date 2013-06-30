@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 10;
+use Test::More;
 use Test::MockObject;
 use Test::Exception;
 
@@ -64,3 +64,5 @@ is_deeply(\@items_selectable, ["a blessed +1 quarterstaff (weapon in hands)", "a
 is_deeply(\@selectors, ['a', 'X'], "our two selectors were passed in as arguments");
 
 is($menu->commit, '^a ', "first page, selected the quarterstaff, ended the menu");
+
+done_testing;

@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 14;
+use Test::More;
 use Test::MockObject;
 use Test::Exception;
 
@@ -77,3 +77,4 @@ is_deeply([splice @selectors], ['a', 'X', 'c', 'n'], "our four selectors were pa
 
 is($menu->commit, '^>n', "select the last thing on the last page, which exits the menu");
 
+done_testing;

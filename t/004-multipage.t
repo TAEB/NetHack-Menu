@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 14;
+use Test::More;
 use Test::MockObject;
 use Test::Exception;
 
@@ -77,3 +77,4 @@ is_deeply(\@selectors, ['a', 'X', 'c', 'n'], "our four selectors were passed in 
 
 is($menu->commit, '^aX>n ', "first page, select qstaff and cloak, next page, select marker but not the wand, ended the menu");
 
+done_testing;

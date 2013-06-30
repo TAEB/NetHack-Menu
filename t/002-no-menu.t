@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 12;
+use Test::More;
 use Test::MockObject;
 use Test::Exception;
 
@@ -35,4 +35,6 @@ throws_ok { $menu->at_end } qr/Unable to parse a menu/;
 $vt->set_always(row_plaintext => '            (1 of 0)');
 ok(!$menu->has_menu, "has_menu reports no menu");
 throws_ok { $menu->at_end } qr/Unable to parse a menu/;
+
+done_testing;
 

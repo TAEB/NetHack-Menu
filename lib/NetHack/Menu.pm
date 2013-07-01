@@ -3,7 +3,7 @@ use Moose;
 use Moose::Util::TypeConstraints 'enum';
 use NetHack::Menu::Item;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 has vt => (
     is       => 'rw',

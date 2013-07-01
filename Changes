@@ -1,6 +1,8 @@
 Revision history for NetHack-Menu
 
-0.07
+0.07    Sun Jun 30 2013
+        Complete refactor.
+            Your code will have to adjust for NetHack::Menu::Item instances
 
 0.06    Mon Jan 26 11:01:02 2009
         Add select_quantity method.

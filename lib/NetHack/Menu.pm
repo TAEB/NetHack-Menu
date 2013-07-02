@@ -227,7 +227,8 @@ sub deselect {
 # stop as soon as we've got the first item to select
 sub _commit_single {
     my $self = shift;
-    my $out = '^';
+    my $out = '';
+    $out .= '^' if $self->_page_number != 1;
     my $skip_first = 0;
 
     for (@{ $self->_pages }) {
@@ -249,7 +250,8 @@ sub _commit_single {
 sub _commit_multi {
     my $self = shift;
 
-    my $out = '^';
+    my $out = '';
+    $out .= '^' if $self->_page_number != 1;
 
     for my $i (1 .. $self->_page_count) {
         for my $item (@{ $self->_pages->[$i] }) {

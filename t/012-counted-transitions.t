@@ -35,6 +35,6 @@ $menu->select_quantity(sub {
     /1[ABC]/ ? undef : /2[ABC]/ ? 0 : /3[ABC]/ ? 5 : 'all';
 });
 
-is($menu->commit, '^ef5g5h5ijll ', "menu commit handles all combinations");
+is($menu->commit, 'ef5g5h5ijll ', "menu commit handles all combinations");
 
 done_testing;

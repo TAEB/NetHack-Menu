@@ -56,6 +56,6 @@ cmp_deeply(
     ],
 );
 
-is($menu->commit, '^a ', "first page, selected the quarterstaff, ended the menu");
+is($menu->commit, 'a ', "first page, selected the quarterstaff, ended the menu");
 
 done_testing;

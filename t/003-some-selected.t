@@ -58,7 +58,7 @@ cmp_deeply(
     ],
 );
 
-is($menu->commit, '^X ', "first page, deselected the cloak, ended the menu");
+is($menu->commit, 'X ', "first page, deselected the cloak, ended the menu");
 
 done_testing;
 

@@ -63,6 +63,6 @@ cmp_deeply(
     ],
 );
 
-is($menu->commit, '^d2X ', "first page, selected the daggers and 2 of the darts, ended the menu");
+is($menu->commit, 'd2X ', "selected the daggers and 2 of the darts, ended the menu");
 
 done_testing;

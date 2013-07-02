@@ -229,12 +229,9 @@ sub _commit_single {
     my $self = shift;
     my $out = '';
     $out .= '^' if $self->_page_number != 1;
-    my $skip_first = 0;
 
-    for (@{ $self->_pages }) {
-        next if $skip_first++ == 0;
-
-        for my $item (@$_) {
+    for my $i (1 .. $self->_page_count) {
+        for my $item (@{ $self->_pages->[$i] }) {
             if ($item->selected) {
                 return $out . $item->selector;
             }

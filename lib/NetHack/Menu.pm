@@ -276,6 +276,11 @@ sub all_items {
     return map { @{ $_ || [] } } @{ $self->_pages };
 }
 
+sub selected_items {
+    my $self = shift;
+    return grep { $_->selected } $self->all_items;
+}
+
 1;
 
 __END__

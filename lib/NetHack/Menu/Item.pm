@@ -100,5 +100,10 @@ sub commit {
     confess "Internal inconsistency problem in NetHack::Menu::Item! " . $self->dump;
 }
 
+=for Pod::Coverage
+  commit
+
+=cut
+
 1;
 

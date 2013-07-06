@@ -339,6 +339,14 @@ called for each page because this is what does all the compilation.
 
 Note that if there's no menu, this will C<croak>.
 
+=head2 all_items -> [ NetHack::Menu::Item ]
+
+Returns all items in the menu.
+
+=head2 selected_items -> [ NetHack::Menu::Item ]
+
+Returns all selected items in the menu.
+
 =head2 next -> Str
 
 Returns the string to be used to get to the next page. Note that you should

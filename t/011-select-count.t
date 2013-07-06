@@ -15,7 +15,7 @@ $vt->return_rows(split /\n/, (<< 'MENU') x 3);
                      a - a blessed +1 quarterstaff (weapon in hands)
                      d - 14 uncursed +3 daggers
                      X - 3 cursed +0 darts
-                     (end) 
+                     (end)
 MENU
 
 ok($menu->has_menu, "we has a menu");

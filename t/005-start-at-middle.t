@@ -12,7 +12,7 @@ my $menu = NetHack::Menu->new(vt => $vt);
 
 $vt->return_rows(split /\n/, (<< 'MENU') x 3);
                      a - page 1
-                     (3 of 4) 
+                     (3 of 4)
 MENU
 
 ok($menu->has_menu, "we has a menu");
@@ -26,7 +26,7 @@ is($vt->next_return_row, undef, "no more rows left");
 
 $vt->return_rows(split /\n/, (<< 'MENU') x 2);
                      b - page 2
-                     (4 of 4) 
+                     (4 of 4)
 MENU
 
 ok(!$menu->at_end, "it knows we're NOT at the end");
@@ -37,7 +37,7 @@ is($vt->next_return_row, undef, "no more rows left");
 
 $vt->return_rows(split /\n/, (<< 'MENU') x 2);
                      c - page 3
-                     (1 of 4) 
+                     (1 of 4)
 MENU
 
 ok(!$menu->at_end, "it knows we're NOT at the end");
@@ -48,7 +48,7 @@ is($vt->next_return_row, undef, "no more rows left");
 
 $vt->return_rows(split /\n/, (<< 'MENU') x 2);
                      d - page 4
-                     (2 of 4) 
+                     (2 of 4)
 MENU
 
 ok($menu->at_end, "NOW we're at the end");

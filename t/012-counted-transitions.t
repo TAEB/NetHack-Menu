@@ -24,7 +24,7 @@ $vt->return_rows(split /\n/, (<< 'MENU') x 3);
                      j - 4A
                      k + 4B
                      l # 4C
-                     (end) 
+                     (end)
 MENU
 
 ok($menu->has_menu, "we has a menu");

@@ -15,7 +15,7 @@ $vt->return_rows(split /\n/, (<< 'MENU') x 3);
                      a - a blessed +1 quarterstaff (weapon in hands)
                      Armor
                      X - an uncursed +0 cloak of magic resistance (being worn)
-                     (1 of 2) 
+                     (1 of 2)
 MENU
 
 ok($menu->has_menu, "we has a menu");
@@ -32,7 +32,7 @@ $vt->return_rows(split /\n/, (<< 'MENU') x 2);
                      c - a wand of enlightenment (0:12)
                      Tools
                      n - a magic marker (0:91)
-                     (2 of 2) 
+                     (2 of 2)
 MENU
 
 ok($menu->at_end, "NOW we're at the end");

@@ -2,8 +2,7 @@ package NetHack::Menu;
 use Moose;
 use Moose::Util::TypeConstraints 'enum';
 use NetHack::Menu::Item;
-
-our $VERSION = '0.07';
+# ABSTRACT: parse and interact with a NetHack menu
 
 has vt => (
     is       => 'rw',
@@ -285,10 +284,6 @@ sub selected_items {
 
 __END__
 
-=head1 NAME
-
-NetHack::Menu - parse and interact with a NetHack menu
-
 =head1 SYNOPSIS
 
     use NetHack::Menu;
@@ -396,12 +391,6 @@ something. This will be added on an if-needed basis. Anyone?
 
 =back
 
-=head1 AUTHORS
-
-Shawn M Moore, C<sartak@gmail.com>
-
-Stefan O'Rear, C<stefanor@cox.net>
-
 =head1 BUGS
 
 =head2 No-select menus
@@ -426,13 +415,6 @@ Note that "Things that are here" can appear on the third line. Argh!
 =item Otherwise, hit space
 
 =back
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2007-2009 Shawn M Moore.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
 
 =cut
 

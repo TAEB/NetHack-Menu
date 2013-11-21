@@ -2,7 +2,7 @@ package NetHack::Menu::Item;
 use Moose;
 use Moose::Util::TypeConstraints;
 
-enum 'NetHack::Menu::Item::SelectedAll' => qw(all);
+enum 'NetHack::Menu::Item::SelectedAll' => [qw(all)];
 
 has description => (
     is       => 'ro',

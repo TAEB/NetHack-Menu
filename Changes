@@ -1,5 +1,8 @@
 Revision history for NetHack-Menu
 
+0.09    2013-11-21
+        Fix Moose compat issue (doy)
+
 0.08    2013-07-08
         $menu->selected_items
         Avoid sending spurious ^
